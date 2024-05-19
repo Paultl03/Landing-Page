@@ -30,23 +30,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
     });
-
-
+  // Highlight active section while scrolling
+    const options = {
+      root: null, // viewport
+      rootMargin: '0px',
+      threshold: 0.6 
+    };
   
-    // Highlight active section while scrolling
-    window.addEventListener('scroll', function () {
-      sections.forEach(function (section) {
-        const rect = section.getBoundingClientRect();
-        if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-          section.classList.add('your-active-class');
-          const correspondingNavItem = document.querySelector(`a[href="#${section.getAttribute('id')}"]`);
-          correspondingNavItem.classList.add('active');
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        const navItem = document.querySelector(`a[href="#${entry.target.id}"]`);
+        if (entry.isIntersecting) {
+          entry.target.classList.add('your-active-class');
+          if (navItem) {
+            navItem.classList.add('active');
+          }
         } else {
-          section.classList.remove('your-active-class');
-          const correspondingNavItem = document.querySelector(`a[href="#${section.getAttribute('id')}"]`);
-          correspondingNavItem.classList.remove('active');
+          entry.target.classList.remove('your-active-class');
+          if (navItem) {
+            navItem.classList.remove('active');
+          }
         }
       });
+    }, options);
+  
+    sections.forEach(section => {
+      observer.observe(section);
     });
   });
   
